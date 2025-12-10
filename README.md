@@ -39,13 +39,7 @@ python main.py --path /path/to/your/codebase --naming camelCase
 
 ### Example
 
-```bash
-# Fix a codebase with camelCase naming (converts snake_case automatically!)
-python main.py --path C:\MyProject\app --naming camelCase
 
-# Only generate pylintrc without fixing
-python main.py --path C:\MyProject\app --naming camelCase --fix-imports False --fix-whitespace False --fix-unused False
-```
 
 ## How It Works
 
@@ -81,19 +75,7 @@ getUserData()
 totalCount = 10
 ```
 
-## What's NOT Fixed (Requires Manual Fix)
 
-- Syntax errors (unterminated strings, etc.)
-- Logic bugs (missing arguments, duplicate functions)
-- Design issues (too many arguments, etc.)
-
-## ⚠️ Warning: Naming Conversion is RISKY
-
-The `--fix-naming` flag is **disabled by default** because:
-
-1. It converts names in **one file** but may miss references in **other files**
-2. This can cause `undefined-variable` errors across the codebase
-3. It may break imports, function calls, and attribute access
 
 **Only use `--fix-naming` if:**
 - Your codebase is small

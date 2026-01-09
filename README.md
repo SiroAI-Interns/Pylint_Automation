@@ -182,7 +182,6 @@ def processData(input_data):
 | **Function names** | dynamic_converter | Based on `--func-naming` |
 | **Class names** | dynamic_converter | Based on `--class-naming` |
 
-## What's NOT Fixed (Requires Manual Fix)
 
 - Syntax errors (unterminated strings, etc.)
 - Logic bugs (missing arguments, duplicate functions)
@@ -195,6 +194,11 @@ def processData(input_data):
 2. Private variables (`_private`) and dunder methods (`__init__`) are preserved
 3. Constants (`ALL_CAPS`) are preserved by default
 4. External library names are not modified
+
+**Only use `--fix-naming` if:**
+- Your codebase is small
+- You have good test coverage
+- You can manually verify the changes
 
 ## License
 

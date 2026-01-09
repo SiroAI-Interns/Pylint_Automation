@@ -5,8 +5,9 @@ An automated tool that fixes pylint errors in Python codebases based on configur
 ## Features
 
 - 🔧 Automatically fixes pylint errors
-- 🐫 Supports camelCase naming convention
-- 🔄 **NEW: Converts snake_case → camelCase automatically**
+- 🎯 **NEW: Dynamic Naming Conventions** - Set different styles for variables, functions, and classes!
+- 🐫 Supports camelCase, snake_case, PascalCase, SCREAMING_SNAKE_CASE
+- 🔄 Converts naming automatically based on your preferences
 - 📦 Uses autopep8, isort, autoflake under the hood
 - ⚙️ Generates custom `.pylintrc` based on your rules
 
@@ -19,41 +20,154 @@ pip install -r requirements.txt
 
 ## Usage
 
-### Basic Usage
+### Dynamic Naming (Recommended)
+
+Specify different naming conventions for different identifier types:
+
+```bash
+# Variables: snake_case | Functions: camelCase | Classes: PascalCase
+python main.py --path ./myproject --var-naming snake_case --func-naming camelCase --class-naming PascalCase
+```
+
+### Using Presets
+
+```bash
+# Python standard (PEP8 style)
+python main.py --path ./myproject --preset python_standard
+
+# Java style
+python main.py --path ./myproject --preset java_style
+
+# Mixed style (what you asked for!)
+python main.py --path ./myproject --preset mixed_style
+```
+
+### Using Config File
+
+```bash
+python main.py --path ./myproject --config naming_config.json
+```
+
+### Legacy Mode (Single Convention)
 
 ```bash
 python main.py --path /path/to/your/codebase --naming camelCase
 ```
 
-### Options
+## Dynamic Naming Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--var-naming` | Naming style for variables | `snake_case` |
+| `--func-naming` | Naming style for functions | `camelCase` |
+| `--class-naming` | Naming style for classes | `PascalCase` |
+| `--method-naming` | Naming style for methods | `camelCase` |
+| `--arg-naming` | Naming style for arguments | `snake_case` |
+| `--config` | Path to JSON config file | - |
+| `--preset` | Use a preset: `python_standard`, `java_style`, `mixed_style` | - |
+
+## Available Naming Styles
+
+| Style | Example | Best For |
+|-------|---------|----------|
+| `snake_case` | `my_variable_name` | Variables, arguments |
+| `camelCase` | `myVariableName` | Functions, methods |
+| `PascalCase` | `MyClassName` | Classes |
+| `SCREAMING_SNAKE_CASE` | `MY_CONSTANT` | Constants |
+
+## Available Presets
+
+### `python_standard` (PEP8)
+```
+Variables:  snake_case
+Functions:  snake_case
+Classes:    PascalCase
+Constants:  SCREAMING_SNAKE_CASE
+```
+
+### `java_style`
+```
+Variables:  camelCase
+Functions:  camelCase
+Classes:    PascalCase
+Constants:  SCREAMING_SNAKE_CASE
+```
+
+### `mixed_style` (Your Request!)
+```
+Variables:  snake_case
+Functions:  camelCase
+Classes:    PascalCase
+Constants:  SCREAMING_SNAKE_CASE
+```
+
+## Config File Format
+
+Create a `naming_config.json`:
+
+```json
+{
+  "naming_preferences": {
+    "variables": "snake_case",
+    "functions": "camelCase",
+    "classes": "PascalCase",
+    "methods": "camelCase",
+    "arguments": "snake_case",
+    "attributes": "snake_case",
+    "constants": "SCREAMING_SNAKE_CASE",
+    "preserve_private": true,
+    "preserve_constants": true
+  }
+}
+```
+
+## Other Options
 
 | Option | Description | Default |
 |--------|-------------|---------|
 | `--path` | Path to the codebase to fix | Required |
-| `--naming` | Naming convention: `camelCase` or `snake_case` | `camelCase` |
 | `--fix-imports` | Fix import order issues | `True` |
 | `--fix-whitespace` | Fix whitespace issues | `True` |
 | `--fix-unused` | Remove unused imports/variables | `True` |
-| `--fix-naming` | ⚠️ Convert snake_case to camelCase (RISKY) | `False` |
+| `--fix-naming` | Apply naming convention fixes | `True` |
 | `--generate-pylintrc` | Generate a .pylintrc file | `True` |
+| `--max-line-length` | Maximum line length | `100` |
 
-### Example
+## Example: Dynamic Naming in Action
 
-```bash
-# Fix a codebase with camelCase naming (converts snake_case automatically!)
-python main.py --path C:\MyProject\app --naming camelCase
+### Before
+```python
+class user_manager:
+    def Get_User_Data(self, UserId):
+        user_name = "John"
+        UserAge = 25
+        return user_name, UserAge
+    
+def processData(input_data):
+    result_value = input_data * 2
+    return result_value
+```
 
-# Only generate pylintrc without fixing
-python main.py --path C:\MyProject\app --naming camelCase --fix-imports False --fix-whitespace False --fix-unused False
+### After (with `--var-naming snake_case --func-naming camelCase --class-naming PascalCase`)
+```python
+class UserManager:
+    def getUserData(self, user_id):
+        user_name = "John"
+        user_age = 25
+        return user_name, user_age
+    
+def processData(input_data):
+    result_value = input_data * 2
+    return result_value
 ```
 
 ## How It Works
 
-1. **Generates `.pylintrc`** - Creates a pylint configuration file based on your naming rules
+1. **Generates `.pylintrc`** - Creates a pylint configuration file
 2. **Runs isort** - Fixes import order issues
 3. **Runs autopep8** - Fixes whitespace, indentation, line length
 4. **Runs autoflake** - Removes unused imports and variables
-5. **Converts naming** - **Detects snake_case and converts to camelCase** (or vice versa)
+5. **Dynamic Naming Conversion** - Detects identifier types and converts based on preferences
 6. **Runs pylint** - Validates the fixes and shows remaining issues
 
 ## What Gets Fixed
@@ -64,41 +178,23 @@ python main.py --path C:\MyProject\app --naming camelCase --fix-imports False --
 | Whitespace | autopep8 | Removes trailing spaces |
 | Line length | autopep8 | Breaks long lines |
 | Unused imports | autoflake | Removes `import json` if unused |
-| **snake_case names** | naming_converter | `my_variable` → `myVariable` |
-| **Mixed case names** | naming_converter | `json_Block` → `jsonBlock` |
-
-## Naming Conversion Examples
-
-```python
-# BEFORE (snake_case)
-user_name = "John"
-get_user_data()
-total_count = 10
-
-# AFTER (camelCase)
-userName = "John"
-getUserData()
-totalCount = 10
-```
+| **Variable names** | dynamic_converter | Based on `--var-naming` |
+| **Function names** | dynamic_converter | Based on `--func-naming` |
+| **Class names** | dynamic_converter | Based on `--class-naming` |
 
 ## What's NOT Fixed (Requires Manual Fix)
 
 - Syntax errors (unterminated strings, etc.)
 - Logic bugs (missing arguments, duplicate functions)
 - Design issues (too many arguments, etc.)
+- External library references
 
-## ⚠️ Warning: Naming Conversion is RISKY
+## ⚠️ Important Notes
 
-The `--fix-naming` flag is **disabled by default** because:
-
-1. It converts names in **one file** but may miss references in **other files**
-2. This can cause `undefined-variable` errors across the codebase
-3. It may break imports, function calls, and attribute access
-
-**Only use `--fix-naming` if:**
-- Your codebase is small
-- You have good test coverage
-- You can manually verify the changes
+1. **Backup your code** before running with naming fixes
+2. Private variables (`_private`) and dunder methods (`__init__`) are preserved
+3. Constants (`ALL_CAPS`) are preserved by default
+4. External library names are not modified
 
 ## License
 

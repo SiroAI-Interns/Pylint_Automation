@@ -2,19 +2,23 @@
 import subprocess
 import sys
 from pathlib import Path
+from typing import Optional
 
 from colorama import Fore, Style
 
 from .config import Config
 from .naming_converter import fix_naming
+from .dynamic_config import NamingPreferences, DynamicConfig
+from .dynamic_naming_converter import fix_naming_dynamic
 
 
 class CodeFixer:
     """Applies automated fixes to the codebase."""
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, naming_preferences: Optional[NamingPreferences] = None):
         """Initialize the fixer with configuration."""
         self.config = config
+        self.naming_preferences = naming_preferences
 
     def fix_all(self) -> None:
         """Apply all configured fixes."""
@@ -27,14 +31,20 @@ class CodeFixer:
         if self.config.fix_unused:
             self._fix_unused()
 
-        # Naming conversion - now with safety checks
+        # Naming conversion
         if self.config.fix_naming:
             self._fix_naming()
 
     def _fix_naming(self) -> None:
-        """Fix naming conventions (snake_case to camelCase or vice versa)."""
-        print(f"  {Fore.YELLOW}⚠️  Converting names (with syntax validation)...{Style.RESET_ALL}")
-        fix_naming(self.config.codebase_path, self.config.naming_convention)
+        """Fix naming conventions."""
+        if self.naming_preferences:
+            # Use dynamic naming with per-type preferences
+            print(f"  {Fore.YELLOW}⚠️  Converting names (dynamic mode with syntax validation)...{Style.RESET_ALL}")
+            fix_naming_dynamic(self.config.codebase_path, self.naming_preferences)
+        else:
+            # Fall back to legacy single-convention mode
+            print(f"  {Fore.YELLOW}⚠️  Converting names (legacy mode with syntax validation)...{Style.RESET_ALL}")
+            fix_naming(self.config.codebase_path, self.config.naming_convention)
 
     def _fix_imports(self) -> None:
         """Fix import order using isort."""
@@ -106,4 +116,3 @@ class CodeFixer:
                 print(f"    {Fore.YELLOW}⚠️  autoflake completed with warnings{Style.RESET_ALL}")
         except FileNotFoundError:
             print(f"    {Fore.RED}❌ autoflake not found. Install with: pip install autoflake{Style.RESET_ALL}")
-

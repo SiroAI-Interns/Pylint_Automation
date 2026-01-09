@@ -1,0 +1,23 @@
+{
+  "naming_preferences": {
+    "variables": "snake_case",
+    "functions": "camelCase",
+    "classes": "PascalCase",
+    "methods": "camelCase",
+    "arguments": "snake_case",
+    "attributes": "snake_case",
+    "constants": "SCREAMING_SNAKE_CASE",
+    "preserve_private": true,
+    "preserve_constants": true
+  },
+  "_comments": {
+    "description": "This is an example configuration file for Autoencoder dynamic naming.",
+    "available_styles": [
+      "snake_case - my_variable_name",
+      "camelCase - myVariableName",
+      "PascalCase - MyClassName",
+      "SCREAMING_SNAKE_CASE - MY_CONSTANT"
+    ],
+    "usage": "python main.py --path ./your_project --config naming_config.json"
+  }
+}

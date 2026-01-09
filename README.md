@@ -1,5 +1,8 @@
 # Autoencoder - Automated Pylint Error Fixer
 
+CMND TO RUN : python main.py --path "C:\Users\Lenovo\Downloads\slice-trials-run-tasks-pylint\slice-trials-run-tasks-pylint\app" --var-naming snake_case --func-naming camelCase --class-naming PascalCase
+
+
 An automated tool that fixes pylint errors in Python codebases based on configurable rules.
 
 ## Features
